@@ -1,0 +1,38 @@
+name: API Cache Status Cron Job
+
+on:
+  schedule:
+    # Dakikada bir çalışır (UTC zamanı)
+    - cron: '* * * * *'
+  workflow_dispatch: # Manuel tetikleme için
+
+jobs:
+  trigger-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Trigger API endpoint
+        env:
+          API_URL: ${{ secrets.API_URL || 'https://assetapi.onrender.com/api/cache/status' }}
+        run: node dist/src/index.js
+
+      - name: Log result
+        if: always()
+        run: |
+          echo "Cron job completed at $(date)"
