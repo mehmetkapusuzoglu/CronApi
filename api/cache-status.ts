@@ -1,0 +1,87 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import axios from 'axios';
+
+// Retry mekanizması için yardımcı fonksiyon
+async function fetchWithRetry(
+  url: string,
+  maxRetries: number = 3,
+  retryDelay: number = 1000
+): Promise<any> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await axios.get(url, {
+        timeout: 30000, // 30 saniye timeout
+        headers: {
+          'User-Agent': 'ApiBot/1.0',
+          'Accept': 'application/json',
+        },
+      });
+
+      return {
+        success: true,
+        status: response.status,
+        statusText: response.statusText,
+        timestamp: new Date().toISOString(),
+        attempt,
+      };
+    } catch (error: any) {
+      lastError = error;
+      
+      // Son deneme değilse bekle
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+      }
+    }
+  }
+
+  // Tüm denemeler başarısız oldu
+  throw lastError || new Error('Unknown error occurred');
+}
+
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse
+) {
+  // Sadece GET isteklerine izin ver
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // API endpoint URL'i
+  // Swagger dokümantasyonundan çıkarılan endpoint: /api/cache/status
+  // Eğer bu çalışmazsa, aşağıdaki alternatifleri deneyebilirsiniz
+  const apiUrl = process.env.API_URL || 'https://assetapi.onrender.com/api/cache/status';
+
+  try {
+    const result = await fetchWithRetry(apiUrl);
+    
+    // Başarılı log
+    console.log(`[SUCCESS] ${result.timestamp} - Status: ${result.status} - Attempt: ${result.attempt}`);
+    
+    return res.status(200).json({
+      success: true,
+      message: 'API endpoint başarıyla tetiklendi',
+      data: result,
+    });
+  } catch (error: any) {
+    // Hata logu
+    const errorMessage = error?.message || 'Bilinmeyen hata';
+    const errorStatus = error?.response?.status || 'N/A';
+    
+    console.error(`[ERROR] ${new Date().toISOString()} - Status: ${errorStatus} - Error: ${errorMessage}`);
+    
+    // Hata durumunda bile 200 döndür (cron job'un devam etmesi için)
+    // Ancak hata bilgisini logla
+    return res.status(200).json({
+      success: false,
+      message: 'API endpoint tetiklenirken hata oluştu',
+      error: {
+        message: errorMessage,
+        status: errorStatus,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  }
+}

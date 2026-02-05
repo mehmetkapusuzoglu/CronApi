@@ -1,0 +1,21 @@
+{
+  "name": "api-bot",
+  "version": "1.0.0",
+  "description": "Vercel'de çalışan API bot - dakikada bir cache status endpoint'ini tetikler",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "tsc"
+  },
+  "keywords": ["vercel", "cron", "api", "bot"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/node": "^3.0.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
