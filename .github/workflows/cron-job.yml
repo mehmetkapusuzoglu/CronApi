@@ -29,7 +29,7 @@ jobs:
 
       - name: Trigger API endpoint
         env:
-          API_URL: ${{ secrets.API_URL || 'https://assetapi.onrender.com/api/cache/status' }}
+          API_URL: ${{ secrets.API_URL || 'https://assetapi.onrender.com/' }}
         run: node dist/src/index.js
 
       - name: Log result
