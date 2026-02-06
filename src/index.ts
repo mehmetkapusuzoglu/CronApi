@@ -41,7 +41,7 @@ async function fetchWithRetry(
 
 async function main() {
   // API endpoint URL'i
-  const apiUrl = process.env.API_URL || 'https://assetapi.onrender.com/api/cache/status';
+  const apiUrl = process.env.API_URL || 'https://assetapi.onrender.com/';
 
   try {
     const result = await fetchWithRetry(apiUrl);

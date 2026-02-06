@@ -21,7 +21,7 @@ npm install
 
 2. (Opsiyonel) API URL'ini GitHub Secrets olarak ayarlayın:
    - GitHub repo'nuzda **Settings** > **Secrets and variables** > **Actions**
-   - Yeni secret ekleyin: `API_URL` = `https://assetapi.onrender.com/api/cache/status`
+   - Yeni secret ekleyin: `API_URL` = `https://assetapi.onrender.com/`
 
 ## GitHub Actions ile Çalıştırma
 
@@ -38,7 +38,7 @@ Cron job `.github/workflows/cron-job.yml` dosyasında tanımlanmıştır:
 ## API Endpoint
 
 Varsayılan olarak şu endpoint tetiklenir:
-- `https://assetapi.onrender.com/api/cache/status`
+- `https://assetapi.onrender.com/`
 
 Eğer endpoint farklıysa:
 1. GitHub Secrets'da `API_URL` değişkenini ayarlayın

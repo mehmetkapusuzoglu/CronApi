@@ -50,9 +50,7 @@ export default async function handler(
   }
 
   // API endpoint URL'i
-  // Swagger dokümantasyonundan çıkarılan endpoint: /api/cache/status
-  // Eğer bu çalışmazsa, aşağıdaki alternatifleri deneyebilirsiniz
-  const apiUrl = process.env.API_URL || 'https://assetapi.onrender.com/api/cache/status';
+  const apiUrl = process.env.API_URL || 'https://assetapi.onrender.com/';
 
   try {
     const result = await fetchWithRetry(apiUrl);
