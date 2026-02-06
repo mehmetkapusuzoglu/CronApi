@@ -2,8 +2,8 @@ name: API Cache Status Cron Job
 
 on:
   schedule:
-    # Dakikada bir çalışır (UTC zamanı)
-    - cron: '* * * * *'
+    # Her 5 dakikada bir çalışır (UTC zamanı)
+    - cron: '*/5 * * * *'
   workflow_dispatch: # Manuel tetikleme için
 
 jobs:
