@@ -3,6 +3,8 @@ name: API Cache Status Cron Job
 on:
   schedule:
     # Her 5 dakikada bir çalışır (UTC zamanı)
+    # Not: GitHub Actions scheduled workflow'ları bazen gecikebilir (30-60 dakika)
+    # Bu GitHub'ın altyapı limitasyonudur ve normaldir
     - cron: '*/5 * * * *'
   workflow_dispatch: # Manuel tetikleme için
 
@@ -20,7 +22,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
 
